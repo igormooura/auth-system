@@ -39,7 +39,7 @@ export const createUser = async (req: Request,res: Response): Promise<void> => {
   }
 };
 
-export const getUsers = async (req: Request, res: Response): Promise<void> => {
+export const getAllUsers = async (req: Request, res: Response): Promise<void> => {
   try {
     const users = await UserModel.find({});
     res.status(200).json(users);
@@ -47,3 +47,20 @@ export const getUsers = async (req: Request, res: Response): Promise<void> => {
     res.status(404).json({ message: "Users not found" });
   }
 };
+
+export const getUserById = async(req: Request, res:Response): Promise<void> => {
+    try {
+        const userId = req.params._id;
+        const userById = await UserModel.findById(userId);
+
+        
+        if(!userById){
+            res.status(404).json({message: "User not found"});
+        }
+
+            res.status(200).json(userById);
+    } catch (error) {
+        console.error("Error searching by id:", error);
+        res.status(500).json({ message: "Internal error" });
+    }
+}
