@@ -8,21 +8,28 @@ export const createUser = async (req: Request,res: Response): Promise<void> => {
   session.startTransaction();
 
   try {
-    const existentUser = await UserModel.findOne({
-      email: req.body.email,
-    }).session(session);
+
+    const { name, email, password } = req.body
+
+    if(!email || !name || !password) {
+      await session.abortTransaction();
+      session.endSession();
+      res.status(400).json({message: "All fields need being filled"})
+    }
+
+    const existentUser = await UserModel.findOne({email}).session(session);
 
     if (existentUser) {
       await session.abortTransaction();
       session.endSession();
-      res.status(400).json({ message: "Usuário já existe" });
+      res.status(400).json({ message: "Usuer already exists" });
       return;
     }
 
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
     const newUser = new UserModel({
-      nome: req.body.nome,
+      name: req.body.name,
       email: req.body.email,
       password: hashedPassword,
     });
@@ -30,12 +37,12 @@ export const createUser = async (req: Request,res: Response): Promise<void> => {
     await newUser.save({ session });
     await session.commitTransaction();
     session.endSession();
-    res.status(201).json({ message: "Usuário criado com sucesso", user: newUser });
+    res.status(201).json({ message: "User successfully created", user: newUser });
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
     console.error("Error creating user:", error);
-    res.status(500).json({ message: "Erro interno do servidor" });
+    res.status(500).json({ message: "Intern error" });
   }
 };
 
@@ -64,3 +71,39 @@ export const getUserById = async(req: Request, res:Response): Promise<void> => {
         res.status(500).json({ message: "Internal error" });
     }
 }
+
+export const updateUser = async (req: Request, res: Response): Promise<void> => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const { name, email, password } = req.body; 
+    const userId = req.params._id; 
+    
+
+    const user = await UserModel.findById(userId).session(session);
+
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    if (name) user.name = name;
+    if (email) user.email = email;
+    if (password) user.password = await bcrypt.hash(password, 10); 
+
+    await user.save({ session });
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(200).json({ message: "User updated successfully", user });
+
+  } catch (error) {
+
+    await session.abortTransaction();
+    session.endSession();
+
+    console.error("Error updating user", error);
+    res.status(500).json({ message: "Internal error" });
+  }
+};
