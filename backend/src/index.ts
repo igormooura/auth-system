@@ -5,7 +5,7 @@ import connectToDb from "./config/db";
 import cookieParser from "cookie-parser";
 import catchErrors from "./utils/catchErrors";
 import errorHandler from "./middleware/errorHandler";
-import authRoutes from "./routes/authRoutes"; 
+import userRoutes from "./routes/userRoutes"; 
 
 const app = express();
 
@@ -23,7 +23,7 @@ app.get("/", (req, res) => {
     res.send("EAE")
 });
 
-app.use("/auth", authRoutes); 
+app.use(userRoutes); 
 
 // error middleware
 app.use(errorHandler);
