@@ -7,6 +7,7 @@ import errorHandler from "./middleware/errorHandler";
 import userRoutes from "./routes/userRoutes"; 
 import acessRoutes from "./routes/acessRoutes"
 
+
 const app = express();
 
 app.use(express.json());
@@ -22,6 +23,7 @@ app.use(cookieParser());
 app.get("/", (req, res) => {
     res.send("EAE")
 });
+
 
 app.use(acessRoutes);
 app.use(userRoutes); 

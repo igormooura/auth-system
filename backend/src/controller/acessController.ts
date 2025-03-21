@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 import { Request, Response } from "express";
 import UserModel from "../model/user";
 import bcrypt from "bcrypt";
-import { coerce } from "zod";
+import jwt from "jsonwebtoken";
 
-export const createUser = async ( req: Request, res: Response ): Promise<void> => {
+export const createUser = async (req: Request, res: Response): Promise<void> => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
@@ -55,6 +55,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
 
+
     if (!email || !password) {
       res.status(400).json({ error: "Required fields not filled." });
     }
@@ -77,11 +78,19 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       res.status(401).json({ error: "Incorrect password" });
     }
 
+    const token = jwt.sign(
+      { userId: user._id, email: user.email },
+      'segredo_demais',
+      { expiresIn: '2h' }
+    )
+
     await session.commitTransaction();
     res.status(200).json({
       message: "Login successful",
+      token,
       user,
     });
+    
   } catch {
     await session.abortTransaction();
     res.status(500).json({ error: "Internal server error" });
