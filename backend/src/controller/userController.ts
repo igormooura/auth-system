@@ -107,3 +107,30 @@ export const updateUser = async (req: Request, res: Response): Promise<void> => 
     res.status(500).json({ message: "Internal error" });
   }
 };
+
+export const deleteUser = async(req: Request, res: Response): Promise<void> =>{ 
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+      const userId = req.params._id;
+      const user = await UserModel.findByIdAndDelete(userId).session(session);
+
+      if (!user) {
+        await session.abortTransaction();
+        session.endSession();
+        res.status(404).json({ message: "User not found" });
+      }
+
+      await session.commitTransaction();
+      session.endSession();
+
+      res.status(200).json({mesage: "User deleted with success"})
+  } catch (error) { 
+      await session.abortTransaction();
+      session.endSession();
+      console.error("Error deleting user: ", error);
+      res.status(500).json({message:"Internal error"})
+    } 
+}
