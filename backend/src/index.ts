@@ -3,7 +3,6 @@ import express from "express";
 import cors from "cors";
 import connectToDb from "./config/db";
 import cookieParser from "cookie-parser";
-import catchErrors from "./utils/catchErrors";
 import errorHandler from "./middleware/errorHandler";
 import userRoutes from "./routes/userRoutes"; 
 import acessRoutes from "./routes/acessRoutes"
