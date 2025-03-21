@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import catchErrors from "./utils/catchErrors";
 import errorHandler from "./middleware/errorHandler";
 import userRoutes from "./routes/userRoutes"; 
+import acessRoutes from "./routes/acessRoutes"
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.get("/", (req, res) => {
     res.send("EAE")
 });
 
+app.use(acessRoutes);
 app.use(userRoutes); 
 
 // error middleware
