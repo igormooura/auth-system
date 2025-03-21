@@ -17,14 +17,12 @@ const handleUnauthorizedError = (next: NextFunction): void => {
 };
 
 function authMiddleware(req: Request, res: Response, next: NextFunction) {
-    const authHeader = req.get('Authorization') // get authHeader -> check if it's valid 
+    const authHeader = req.get('Authorization') 
 
     
     if (authHeader) {
         const bearer = authHeader.split(' ')[0].toLowerCase();
         const token = authHeader.split(' ')[1];
-        console.log("Bearer:", bearer); // Log para verificar o prefixo
-        console.log("Token:", token);
 
         if (token && bearer === 'bearer') {
             const decode = jwt.verify(token, 'segredo_demais');
