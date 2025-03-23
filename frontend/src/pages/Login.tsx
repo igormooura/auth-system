@@ -10,7 +10,6 @@ const Login = () => {
   return (
     <div className="bg-gradient-to-tl from-cyan-900 to-cyan-500 min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-[1000px] h-auto md:h-[600px] rounded-lg p-4 bg-white bg-opacity-60 flex flex-col md:flex-row items-center justify-center gap-4">
-        {/* Form Section */}
         <div className="flex-1 flex flex-col items-start justify-start gap-5 w-full p-4">
           <div className="text-cyan-900 font-bold text-3xl mb-4">
             <h1>Welcome!</h1>
