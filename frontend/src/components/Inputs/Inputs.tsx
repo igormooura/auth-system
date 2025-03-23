@@ -14,13 +14,13 @@ const Inputs = ({
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }) => {
   return (
-    <div className="w-[450px] h-[50px] rounded-lg p-2 bg-white bg-opacity-60">
+    <div className="w-full max-w-[450px] h-[50px] rounded-lg p-2 bg-white bg-opacity-60">
       <input
-        type={type} 
-        placeholder={placeholder} 
-        value={value} 
-        onChange={onChange} 
-        required={required} 
+        type={type}
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        required={required}
         className="w-full h-full bg-transparent outline-none"
       />
     </div>
