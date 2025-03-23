@@ -1,6 +1,7 @@
 import Inputs from "../components/Inputs";
 import cadeado from "../assets/cadeado.png";
 import { useState } from "react";
+import SubmitButton from "../components/SubmitButton/SubmitButton";
 
 const Login = () => {
 
@@ -28,6 +29,8 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
+
+          <SubmitButton/>
         </div>
 
         <div className="flex-1 flex items-center justify-center">
