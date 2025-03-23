@@ -1,9 +1,15 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Login from "./pages/Login";
+
 function App() {
   return (
-    <div className="bg-gradient-to-tl from-cyan-900 to-cyan-500 min-h-screen">
-      
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Login/>}> </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 
 export default App;
+
