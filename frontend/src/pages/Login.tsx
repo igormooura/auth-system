@@ -1,7 +1,7 @@
 import Inputs from "../components/Inputs/Inputs";
 import cadeado from "../assets/cadeado.png";
 import { useState } from "react";
-import SubmitButton from "../components/SubmitButton/SubmitButton";
+import SubmitButton from "../components/Buttons/SubmitButton";
 import { Link } from "react-router-dom";
 
 const Login = () => {

@@ -2,7 +2,7 @@ import { useState } from "react";
 import Inputs from "../components/Inputs/Inputs";
 import seguranca from "../assets/seguranca.png";
 import { Link } from "react-router-dom";
-import SubmitButton from "../components/SubmitButton/SubmitButton";
+import SubmitButton from "../components/Buttons/SubmitButton";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -21,6 +21,10 @@ const SignUp = () => {
         </div>
 
         <div className="flex-1 flex flex-col items-start gap-5 w-full p-4">
+          <div className="text-cyan-900 font-bold text-3xl mb-4">
+            <h1>Register your account</h1>
+          </div>
+
           <div className="w-full max-w-[450px]">
             <label className="block text-lg text-white text-left">Name</label>
             <Inputs
@@ -44,7 +48,9 @@ const SignUp = () => {
           </div>
 
           <div className="w-full max-w-[450px]">
-            <label className="block text-lg text-white text-left">Password</label>
+            <label className="block text-lg text-white text-left">
+              Password
+            </label>
             <Inputs
               type="password"
               placeholder="Password"
@@ -54,14 +60,15 @@ const SignUp = () => {
             />
           </div>
 
-          <SubmitButton>
-            Register
-          </SubmitButton>
+          <SubmitButton>Register</SubmitButton>
 
           <div className="w-full max-w-[450px] text-center">
             <span className="text-white text-lg">
               Already have an account?{" "}
-              <Link to="/" className="text-cyan-200 hover:text-cyan-400 underline">
+              <Link
+                to="/"
+                className="text-cyan-200 hover:text-cyan-400 underline"
+              >
                 Login
               </Link>
             </span>
