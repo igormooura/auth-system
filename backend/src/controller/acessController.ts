@@ -63,12 +63,12 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     const user = await UserModel.findOne({ email }).session(session);
 
     if (!user) {
-      res.status(404).json({ message: "Email not found" });
+      res.status(404).json({ message: "Wrong email or password." });
       return;
     }
 
     if (!user.password || typeof user.password !== "string") {
-      res.status(500).json({ error: "User password is invalid or missing." });
+      res.status(500).json({ error: "Wrong email or password." });
       return;
     }
 
