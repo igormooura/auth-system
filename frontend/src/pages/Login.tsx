@@ -2,6 +2,7 @@ import Inputs from "../components/Inputs/Inputs";
 import cadeado from "../assets/cadeado.png";
 import { useState } from "react";
 import SubmitButton from "../components/SubmitButton/SubmitButton";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -31,17 +32,23 @@ const Login = () => {
             required
           />
 
-          <SubmitButton />
+          <SubmitButton>
+            Login
+          </SubmitButton>
 
-          <p className="text-white text-lg w-full text-center mt-6 md:mt-10">
-            Don't have an account?&nbsp;
-            <a href="/signup" className="text-blue-500 hover:underline">
-              Sign up
-            </a>
-          </p>
+          <div className="w-full max-w-[450px] text-center">
+            <span className="text-white text-lg">
+              Don't have an account?{" "}
+              <Link
+                to="/signup"
+                className="text-cyan-200 hover:text-cyan-400 underline"
+              >
+                Sign Up
+              </Link>
+            </span>
+          </div>
         </div>
 
-       
         <div className="flex-1 flex items-center justify-center w-full p-4">
           <img
             src={cadeado}
