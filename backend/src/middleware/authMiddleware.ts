@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 
 class HttpError extends Error {
     status: number;
@@ -19,34 +18,35 @@ const handleUnauthorizedError = (next: NextFunction): void => {
 function authMiddleware(req: Request, res: Response, next: NextFunction) {
     const authHeader = req.get('Authorization') 
 
-    
     if (authHeader) {
         const bearer = authHeader.split(' ')[0].toLowerCase();
         const token = authHeader.split(' ')[1];
 
         if (token && bearer === 'bearer') {
-            const decode = jwt.verify(token, 'segredo_demais');
-
-            if (decode) {
-                next()
-            } else {
-                // fail to authenticate user
-                handleUnauthorizedError(next)
+            try {
+                // Verify the token
+                jwt.verify(token, process.env.JWT_SECRET || 'segredo_demais', (err, decoded) => {
+                    if (err) {
+                        // fail to authenticate user
+                        return res.status(401).json({ 
+                            redirect: "http://localhost:5173/", 
+                            message: "Login to access" 
+                        });
+                    }
+                    next();
+                });
+            } catch (error) {
+                // Catch any other errors
+                handleUnauthorizedError(next);
             }
         } else {
             // token type not bearer
             handleUnauthorizedError(next);
         }
     } else {
-        //no token
-        handleUnauthorizedError(next)
+        // no token
+        handleUnauthorizedError(next);
     }
-    try {
-
-    } catch (error) {
-        handleUnauthorizedError(next)
-    }
-
 }
 
-export default authMiddleware
+export default authMiddleware;

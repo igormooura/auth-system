@@ -38,7 +38,7 @@ const SignUp = () => {
       });
 
       console.log("Registration successful", response.data);
-      navigate("/", { state: { registrationSuccess: true } });
+      navigate("/");
       
     } catch (error) {
       setLoading(false);
@@ -116,7 +116,7 @@ const SignUp = () => {
             <span className="text-white text-lg">
               Already have an account?{" "}
               <Link
-                to="/login"
+                to="/"
                 className="text-cyan-200 hover:text-cyan-400 underline"
               >
                 Login
