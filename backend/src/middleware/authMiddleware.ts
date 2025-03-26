@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 
 class HttpError extends Error {
     status: number;
@@ -22,7 +22,7 @@ function authMiddleware(req: Request, res: Response, next: NextFunction) {
         const bearer = authHeader.split(' ')[0].toLowerCase();
         const token = authHeader.split(' ')[1];
 
-        if (token && bearer === 'bearer') {
+        if (token && bearer.startsWith('bearer')) {
             try {
                 // Verify the token
                 jwt.verify(token, process.env.JWT_SECRET || 'segredo_demais', (err, decoded) => {
@@ -33,6 +33,13 @@ function authMiddleware(req: Request, res: Response, next: NextFunction) {
                             message: "Login to access" 
                         });
                     }
+
+                    if (decoded && typeof decoded !== 'string') {
+                        req.user = decoded as JwtPayload;  
+                    } else {
+                        req.user = undefined; 
+                    }
+                   
                     next();
                 });
             } catch (error) {

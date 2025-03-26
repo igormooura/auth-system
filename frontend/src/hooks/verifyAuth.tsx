@@ -5,17 +5,17 @@ import axios from "axios";
 const useVerifyAuth = () => {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userInfo, setUserInfo] = useState<any>(null);
+  const [userInfo, setUserInfo] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [token, SetToken] = useState(localStorage.getItem("token") || "");
 
   useEffect(() => {
     const verifyAuth = async () => {
-      const token = localStorage.getItem("authToken");
-
+     
       if (!token) {
-        alert("Sem token")
         navigate("/")
+        alert("Sem token")
         return;
       }
       console.log(token);
@@ -32,10 +32,9 @@ const useVerifyAuth = () => {
       } catch (err) {
         if (axios.isAxiosError(err)) {
           if (err.response?.status === 401) {
-            localStorage.removeItem("authToken");
-            localStorage.removeItem("userData");
-            setError("Session expired. Please log in again.");
+            SetToken("");
             navigate("/");
+            return;
           } else {
             setError("Error verifying authentication");
           }
@@ -48,30 +47,14 @@ const useVerifyAuth = () => {
     };
 
     verifyAuth();
-  }, [navigate]);
+  }, [navigate, token]);
 
-  const refreshAuth = async () => {
-    setIsLoading(true);
-    const token = localStorage.getItem("authToken");
-
-    try {
-      const response = await axios.get("http://localhost:4000/verify-auth", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      setIsAuthenticated(true);
-      setUserInfo(response.data.user);
-      setError("");
-      return true;
-    } catch (err) {
-      setIsAuthenticated(false);
-      setUserInfo(null);
-      return false;
-    } finally {
-      setIsLoading(false);
-    }
+  const logout = () => {
+    localStorage.removeItem("token");
+    SetToken("");
+    setIsAuthenticated(false);
+    setUserInfo(null);
+    navigate("/");
   };
 
   return {
@@ -79,7 +62,7 @@ const useVerifyAuth = () => {
     userInfo,
     isLoading,
     error,
-    refreshAuth,
+    logout
   };
 };
 
