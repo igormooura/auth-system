@@ -30,7 +30,7 @@ const Login = () => {
       });
       
       const { token, user } = response.data;
-      localStorage.setItem("authToken", token);
+      localStorage.setItem("token", response.data.token);
     
       localStorage.setItem("userData", JSON.stringify(user));
       
