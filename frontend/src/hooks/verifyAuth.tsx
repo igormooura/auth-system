@@ -1,24 +1,30 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
+
+interface UserInfo {
+  userId: string;
+  name: string;
+  email: string;
+}
 
 const useVerifyAuth = () => {
   const navigate = useNavigate();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userInfo, setUserInfo] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [token, SetToken] = useState(localStorage.getItem("token") || "");
+  
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);  
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>("");
+  const [token, SetToken] = useState<string>(localStorage.getItem("token") || "");
 
   useEffect(() => {
     const verifyAuth = async () => {
-     
       if (!token) {
-        navigate("/")
-        alert("Sem token")
+        navigate("/");
+        alert("No token found.");
         return;
       }
-      console.log(token);
+
       try {
         const response = await axios.get("http://localhost:4000/verify-auth", {
           headers: {
@@ -27,11 +33,12 @@ const useVerifyAuth = () => {
         });
 
         setIsAuthenticated(true);
-        setUserInfo(response.data.user);
+        setUserInfo(response.data.user);  
         setError("");
       } catch (err) {
         if (axios.isAxiosError(err)) {
-          if (err.response?.status === 401) {
+          const axiosError = err as AxiosError;
+          if (axiosError.response?.status === 401) {
             SetToken("");
             navigate("/");
             return;
@@ -61,6 +68,7 @@ const useVerifyAuth = () => {
     isAuthenticated,
     userInfo,
     isLoading,
+    token,
     error,
     logout
   };
