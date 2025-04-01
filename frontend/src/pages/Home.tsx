@@ -3,13 +3,22 @@ import useVerifyAuth from "../hooks/verifyAuth";
 import DeleteButton from "../components/Buttons/DeleteButton";
 import SubmitButton from "../components/Buttons/SubmitButton";
 import axios from "axios";
+import { useNavigate } from 'react-router-dom';
 
 
 
 const Home: React.FC = () => {
   const { userInfo, token, logout } = useVerifyAuth();
 
+  const navigate = useNavigate()
+  
   console.log(userInfo)
+
+  const handleEditUser = () => {
+    
+      navigate("/edit");
+    
+  };
 
   const handleDeleteAccount = async () => {
     if (!userInfo || !token) {
@@ -35,7 +44,7 @@ const Home: React.FC = () => {
 
   return (
     <div className="bg-gradient-to-tl from-cyan-900 to-cyan-500 min-h-screen flex items-center justify-center p-4">
-      <SubmitButton>Edit Info</SubmitButton>
+      <SubmitButton onClick={handleEditUser}>Edit Info</SubmitButton>
       <DeleteButton onClick={handleDeleteAccount}>Delete account</DeleteButton>
     </div>
   );
