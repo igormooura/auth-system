@@ -1,8 +1,6 @@
-import mongoose from "mongoose";
 import { Request, Response } from "express";
 import UserModel from "../model/user";
 import bcrypt from "bcrypt";
-
 
 export const getAllUsers = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -13,33 +11,28 @@ export const getAllUsers = async (req: Request, res: Response): Promise<void> =>
   }
 };
 
-export const getUserById = async(req: Request, res:Response): Promise<void> => {
-    try {
-        const userId = req.params._id;
-        const userById = await UserModel.findById(userId);
+export const getUserById = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userId = req.params._id;
+    const userById = await UserModel.findById(userId);
 
-        
-        if(!userById){
-            res.status(404).json({message: "User not found"});
-        }
-
-            res.status(200).json(userById);
-    } catch (error) {
-        console.error("Error searching by id:", error);
-        res.status(500).json({ message: "Internal error" });
+    if (!userById) {
+      res.status(404).json({ message: "User not found" });
+      return;
     }
-}
+
+    res.status(200).json(userById);
+  } catch (error) {
+    res.status(500).json({ message: "Internal error" });
+  }
+};
 
 export const updateUser = async (req: Request, res: Response): Promise<void> => {
-  const session = await mongoose.startSession();
-  session.startTransaction();
-
   try {
-    const { name, email, password } = req.body; 
-    const userId = req.params._id; 
-    
+    const { name, email, password } = req.body;
+    const userId = req.params._id;
 
-    const user = await UserModel.findById(userId).session(session);
+    const user = await UserModel.findById(userId);
 
     if (!user) {
       res.status(404).json({ message: "User not found" });
@@ -48,47 +41,28 @@ export const updateUser = async (req: Request, res: Response): Promise<void> => 
 
     if (name) user.name = name;
     if (email) user.email = email;
-    if (password) user.password = await bcrypt.hash(password, 10); 
+    if (password) user.password = await bcrypt.hash(password, 10);
 
-    await user.save({ session });
-    await session.commitTransaction();
-    session.endSession();
+    await user.save();
 
     res.status(200).json({ message: "User updated successfully", user });
-
   } catch (error) {
-
-    await session.abortTransaction();
-    session.endSession();
-
-    console.error("Error updating user", error);
     res.status(500).json({ message: "Internal error" });
   }
 };
 
-export const deleteUser = async(req: Request, res: Response): Promise<void> =>{ 
-
-  const session = await mongoose.startSession();
-  session.startTransaction();
-
+export const deleteUser = async (req: Request, res: Response): Promise<void> => {
   try {
-      const userId = req.params._id;
-      const user = await UserModel.findByIdAndDelete(userId).session(session);
+    const userId = req.params._id;
+    const user = await UserModel.findByIdAndDelete(userId);
 
-      if (!user) {
-        await session.abortTransaction();
-        session.endSession();
-        res.status(404).json({ message: "User not found" });
-      }
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
 
-      await session.commitTransaction();
-      session.endSession();
-
-      res.status(200).json({mesage: "User deleted with success"})
-  } catch (error) { 
-      await session.abortTransaction();
-      session.endSession();
-      console.error("Error deleting user: ", error);
-      res.status(500).json({message:"Internal error"})
-    } 
-}
+    res.status(200).json({ message: "User deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Internal error" });
+  }
+};

@@ -5,70 +5,45 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 export const createUser = async (req: Request, res: Response): Promise<void> => {
-  const session = await mongoose.startSession();
-  session.startTransaction();
-
   try {
     const { name, email, password } = req.body;
 
     if (!email || !name || !password) {
-      await session.abortTransaction();
-      session.endSession();
-      res.status(400).json({ message: "All fields need being filled" });
-    }
-
-    const existentUser = await UserModel.findOne({ email }).session(session);
-
-    if (existentUser) {
-      await session.abortTransaction();
-      session.endSession();
-      res.status(400).json({ message: "Usuer already exists" });
+      res.status(400).json({ message: "All fields need to be filled" });
       return;
     }
 
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    const existentUser = await UserModel.findOne({ email });
 
-    const newUser = new UserModel({
-      name: req.body.name,
-      email: req.body.email,
-      password: hashedPassword,
-    });
+    if (existentUser) {
+      res.status(400).json({ message: "User already exists" });
+      return;
+    }
 
-    await newUser.save({ session });
-    await session.commitTransaction();
-    session.endSession();
-    res
-      .status(201)
-      .json({ message: "User successfully created", user: newUser });
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = await UserModel.create({ name, email, password: hashedPassword });
+
+    res.status(201).json({ message: "User successfully created", user: newUser });
+
   } catch (error) {
-    await session.abortTransaction();
-    session.endSession();
-    console.error("Error creating user:", error);
-    res.status(500).json({ message: "Intern error" });
+    res.status(500).json({ message: "Internal error" });
   }
 };
 
 export const login = async (req: Request, res: Response): Promise<void> => {
-  const session = await mongoose.startSession();
-  session.startTransaction();
-
   try {
     const { email, password } = req.body;
 
-
     if (!email || !password) {
       res.status(400).json({ error: "Required fields not filled." });
-    }
-
-    const user = await UserModel.findOne({ email }).session(session);
-
-    if (!user) {
-      res.status(404).json({ message: "Wrong email or password." });
       return;
     }
 
-    if (!user.password || typeof user.password !== "string") {
-      res.status(500).json({ error: "Wrong email or password." });
+    const user = await UserModel.findOne({ email });
+
+    if (!user || !user.password || typeof user.password !== "string") {
+      res.status(404).json({ message: "Wrong email or password." });
       return;
     }
 
@@ -76,25 +51,85 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     if (!correctPwd) {
       res.status(401).json({ error: "Incorrect password" });
+      return;
     }
 
     const token = jwt.sign(
-      { userId: user._id, email: user.email },
+      { userId: user._id, email: user.email, name: user.name },
       'segredo_demais',
       { expiresIn: '2h' }
-    )
+    );
 
-    await session.commitTransaction();
-    res.status(200).json({
-      message: "Login successful",
-      token,
-      user,
-    });
-    
+    res.status(200).json({ message: "Login successful", token, user });
+
   } catch {
-    await session.abortTransaction();
     res.status(500).json({ error: "Internal server error" });
-  } finally {
-    session.endSession();
+  }
+};
+
+export const getAllUsers = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const users = await UserModel.find({});
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(404).json({ message: "Users not found" });
+  }
+};
+
+export const getUserById = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userId = req.params._id;
+    const userById = await UserModel.findById(userId);
+
+    if (!userById) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    res.status(200).json(userById);
+  } catch (error) {
+    res.status(500).json({ message: "Internal error" });
+  }
+};
+
+export const updateUser = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { name, email, password } = req.body;
+    const userId = req.params._id;
+
+    const user = await UserModel.findById(userId);
+
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    if (name) user.name = name;
+    if (email) user.email = email;
+    if (password) user.password = await bcrypt.hash(password, 10);
+
+    await user.save();
+
+    res.status(200).json({ message: "User updated successfully", user });
+
+  } catch (error) {
+    res.status(500).json({ message: "Internal error" });
+  }
+};
+
+export const deleteUser = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userId = req.params._id;
+    const user = await UserModel.findByIdAndDelete(userId);
+
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    res.status(200).json({ message: "User deleted successfully" });
+
+  } catch (error) {
+    res.status(500).json({ message: "Internal error" });
   }
 };
