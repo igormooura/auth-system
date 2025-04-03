@@ -28,14 +28,32 @@ const Edit = () => {
   }, [userId]);
   
 
-  
+  const handleEdit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const updatedProfile = { name, email};
+
+    if (!userInfo || !userInfo.userId) return;
+
+    try {
+      const response = await axios.put(`http://localhost:4000/user/${userInfo.userId}`, 
+        updatedProfile
+      );
+      if (response.status === 200) {
+        alert("Profile successfully updated!");
+      
+      }
+    } catch (error) {
+      console.error("Error updating user", error);
+    }
+  };
 
   return (
     <div className="flex flex-col justify-center items-center bg-gradient-to-tl from-cyan-900 to-cyan-500 min-h-screen p-4">
       <h1 className="text-white text-2xl font-semibold">Edit Profile</h1>
 
       <div className="w-full max-w-[1000px] h-auto md:h-[600px] sm:h-[600px] rounded-lg p-4 bg-white bg-opacity-60 flex flex-col md:flex-row items-center justify-center gap-4">
-        <form  className="w-full max-w-[450px] flex-col">
+        <form onSubmit={handleEdit} className="w-full max-w-[450px] flex-col">
           <label className="block text-lg text-white text-left">Email</label>
           <Inputs
             type="email"
