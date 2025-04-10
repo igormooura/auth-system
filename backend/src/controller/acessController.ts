@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import UserModel from "../model/user";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import nodemailer from "nodemailer";
 
 export const createUser = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -67,69 +68,54 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-export const getAllUsers = async (req: Request, res: Response): Promise<void> => {
+export const forgotPassword = async (req: Request, res: Response): Promise<void> => {
   try {
-    const users = await UserModel.find({});
-    res.status(200).json(users);
-  } catch (error) {
-    res.status(404).json({ message: "Users not found" });
-  }
-};
+    const { email } = req.body;
 
-export const getUserById = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const userId = req.params._id;
-    const userById = await UserModel.findById(userId);
-
-    if (!userById) {
-      res.status(404).json({ message: "User not found" });
+    if (!email) {
+      res.status(400).json({ message: "Email is required" });
       return;
     }
 
-    res.status(200).json(userById);
-  } catch (error) {
-    res.status(500).json({ message: "Internal error" });
-  }
-};
-
-export const updateUser = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { name, email, password } = req.body;
-    const userId = req.params._id;
-
-    const user = await UserModel.findById(userId);
+    const user = await UserModel.findOne({ email });
 
     if (!user) {
       res.status(404).json({ message: "User not found" });
       return;
     }
 
-    if (name) user.name = name;
-    if (email) user.email = email;
-    if (password) user.password = await bcrypt.hash(password, 10);
+    const token = jwt.sign(
+      { userId: user._id },
+      'super_secret_key',
+      { expiresIn: '15m' }
+    );
 
-    await user.save();
+    const resetLink = `http://localhost:4000/reset-password?token=${token}`;
 
-    res.status(200).json({ message: "User updated successfully", user });
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER, 
+        pass: process.env.EMAIL_PASS
+      }
+    });
+
+    await transporter.sendMail({
+      from: '"Support Team" <' + process.env.EMAIL_USER + '>',
+      to: email,
+      subject: 'Password Reset Request',
+      html: `
+        <p>Hello ${user.name},</p>
+        <p>You requested to reset your password. Click the link below to proceed:</p>
+        <a href="${resetLink}">Reset Password</a>
+        <p>This link will expire in 15 minutes.</p>
+      `
+    });
+
+    res.status(200).json({ message: "Password reset email sent successfully" });
 
   } catch (error) {
-    res.status(500).json({ message: "Internal error" });
-  }
-};
-
-export const deleteUser = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const userId = req.params._id;
-    const user = await UserModel.findByIdAndDelete(userId);
-
-    if (!user) {
-      res.status(404).json({ message: "User not found" });
-      return;
-    }
-
-    res.status(200).json({ message: "User deleted successfully" });
-
-  } catch (error) {
-    res.status(500).json({ message: "Internal error" });
+    console.error("Error sending reset email:", error);
+    res.status(500).json({ message: "Error sending password reset email" });
   }
 };
