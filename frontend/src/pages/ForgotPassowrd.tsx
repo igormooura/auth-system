@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Inputs from "../components/Inputs/Inputs";
 import SubmitButton from "../components/Buttons/SubmitButton";
+import axios from "axios";
 
 const ForgotPassowrd = () => {
   const [email, setEmail] = useState("");
@@ -8,7 +9,22 @@ const ForgotPassowrd = () => {
   const passwordReset = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    
+    try  {
+      const response = await axios.post("http://localhost:4000/forgotpassword",{
+        email: email
+      })
+
+      if (response.status === 200){
+        alert("Email has been sent");
+  
+      }
+      if(response.status === 404){
+        alert("Email not found in our database");
+      }
+
+    } catch(error){
+        console.log(error)
+    }
 
 
   };
