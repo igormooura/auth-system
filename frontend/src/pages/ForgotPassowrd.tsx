@@ -25,13 +25,16 @@ const ForgotPassowrd = () => {
     } catch(error){
         console.log(error)
     }
-
-
   };
 
   return (
     <div className="bg-gradient-to-tl from-cyan-900 to-cyan-500 min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-[900px] h-auto md:h-[600px] sm:h-[600px] rounded-lg p-4 bg-white bg-opacity-60 flex flex-col md:flex-row items-center justify-center gap-4">
+      <div className="w-full max-w-[900px] h-auto md:h-[600px] sm:h-[600px] rounded-lg p-4 bg-white bg-opacity-60 flex flex-col items-center justify-center gap-4">
+    
+        <div className="text-cyan-900 font-bold text-3xl mb-4 w-full text-center">
+          <h1>Reset your password</h1>
+        </div>
+        
         <form
           onSubmit={passwordReset}
           className="w-full max-w-[450px] flex-col"
@@ -39,12 +42,12 @@ const ForgotPassowrd = () => {
           <label className="block text-lg text-white text-left">Email</label>
           <Inputs
             type="email"
-            placeholder="E-mail"
+            placeholder="Put yout registered email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
-          <div className="mt-5 "> 
+          <div className="mt-5"> 
             <SubmitButton type="submit">
               {"Receive the reset link"}
             </SubmitButton>
@@ -55,4 +58,4 @@ const ForgotPassowrd = () => {
   );
 };
 
-export default ForgotPassowrd;
+export default ForgotPassowrd;  
