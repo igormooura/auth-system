@@ -93,7 +93,7 @@ export const forgotPassword = async (req: Request, res: Response): Promise<void>
       { expiresIn: '15m' }
     );
 
-    const resetLink = `http://localhost:5137/reset-password?token=${token}`;
+    const resetLink = `http://localhost:5173/reset-password?token=${token}`;
 
     const transporter = nodemailer.createTransport({
       service: 'gmail',
@@ -128,12 +128,11 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
     const { token, password } = req.body;
 
     if (!token || !password) {
-      res.status(400).json({ message: "No token or new password" });
+      res.status(400).json({ message: "Token and password are required" });
       return;
     }
 
-    const decoded: any = jwt.verify(token, 'segredo_demais'); 
-
+    const decoded: any = jwt.verify(token, 'segredo_demais');
     const user = await UserModel.findById(decoded.userId);
 
     if (!user) {
@@ -142,14 +141,16 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-
     user.password = hashedPassword;
     await user.save();
 
-    res.status(200).json({ message: "Password redefined" });
+    res.status(200).json({ message: "Password successfully updated" });
 
   } catch (error) {
-    console.error("Error ", error);
-    res.status(400).json({ message: "Invalid Token" });
+    console.error("Reset Password Error:", error);
+    res.status(400).json({ message: "Invalid or expired token" });
   }
 };
+
+
+
