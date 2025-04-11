@@ -4,6 +4,7 @@ import SignUp from "./pages/SignUp";
 import Home from "./pages/Home";
 import Edit from "./pages/Edit";
 import ForgotPassowrd from "./pages/ForgotPassowrd";
+import ResetPassword from "./pages/ResetPassword";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/home" element= {<Home/>}> </Route>
         <Route path="/edit" element={<Edit/>}></Route>
         <Route path="/forgotpassword" element={<ForgotPassowrd/>}/>
+        <Route path="/reset-password" element={<ResetPassword/>}/>
       </Routes>
     </BrowserRouter>
   );
