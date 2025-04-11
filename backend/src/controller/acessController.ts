@@ -4,6 +4,9 @@ import UserModel from "../model/user";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 export const createUser = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -90,7 +93,7 @@ export const forgotPassword = async (req: Request, res: Response): Promise<void>
       { expiresIn: '15m' }
     );
 
-    const resetLink = `http://localhost:4000/reset-password?token=${token}`;
+    const resetLink = `http://localhost:5137/reset-password?token=${token}`;
 
     const transporter = nodemailer.createTransport({
       service: 'gmail',
