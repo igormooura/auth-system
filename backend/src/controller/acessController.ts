@@ -89,7 +89,7 @@ export const forgotPassword = async (req: Request, res: Response): Promise<void>
 
     const token = jwt.sign(
       { userId: user._id },
-      'super_secret_key',
+      'segredo_demais',
       { expiresIn: '15m' }
     );
 
@@ -120,5 +120,36 @@ export const forgotPassword = async (req: Request, res: Response): Promise<void>
   } catch (error) {
     console.error("Error sending reset email:", error);
     res.status(500).json({ message: "Error sending password reset email" });
+  }
+};
+
+export const resetPassword = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { token, password } = req.body;
+
+    if (!token || !password) {
+      res.status(400).json({ message: "No token or new password" });
+      return;
+    }
+
+    const decoded: any = jwt.verify(token, 'segredo_demais'); 
+
+    const user = await UserModel.findById(decoded.userId);
+
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    user.password = hashedPassword;
+    await user.save();
+
+    res.status(200).json({ message: "Password redefined" });
+
+  } catch (error) {
+    console.error("Error ", error);
+    res.status(400).json({ message: "Invalid Token" });
   }
 };
