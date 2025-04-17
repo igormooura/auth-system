@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Inputs from "../components/Inputs/Inputs";
 import axios from "axios";
 import useVerifyAuth from "../hooks/verifyAuth";
+import ReturnButton from "../components/Buttons/ReturnButton";
 
 const Edit = () => {
   const { userInfo } = useVerifyAuth();
@@ -52,7 +53,11 @@ const Edit = () => {
     <div className="flex flex-col justify-center items-center bg-gradient-to-tl from-cyan-900 to-cyan-500 min-h-screen p-4">
       <h1 className="text-white text-2xl font-semibold">Edit Profile</h1>
 
-      <div className="w-full max-w-[1000px] h-auto md:h-[600px] sm:h-[600px] rounded-lg p-4 bg-white bg-opacity-60 flex flex-col md:flex-row items-center justify-center gap-4">
+      <div className="relative w-full max-w-[1000px] h-auto md:h-[600px] sm:h-[600px] rounded-lg p-4 bg-white bg-opacity-60 flex flex-col md:flex-row items-center justify-center gap-4">
+      <div className="absolute top-4 left-4 z-10">
+      <ReturnButton />
+    </div>
+        
         <form onSubmit={handleEdit} className="w-full max-w-[450px] flex-col">
           <label className="block text-lg text-white text-left">Email</label>
           <Inputs

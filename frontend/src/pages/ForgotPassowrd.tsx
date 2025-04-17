@@ -2,6 +2,7 @@ import { useState } from "react";
 import Inputs from "../components/Inputs/Inputs";
 import SubmitButton from "../components/Buttons/SubmitButton";
 import axios from "axios";
+import ReturnButton from "../components/Buttons/ReturnButton";
 
 const ForgotPassowrd = () => {
   const [email, setEmail] = useState("");
@@ -29,8 +30,12 @@ const ForgotPassowrd = () => {
 
   return (
     <div className="bg-gradient-to-tl from-cyan-900 to-cyan-500 min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-[900px] h-auto md:h-[600px] sm:h-[600px] rounded-lg p-4 bg-white bg-opacity-60 flex flex-col items-center justify-center gap-4">
+      <div className="relative w-full max-w-[900px] h-auto md:h-[600px] sm:h-[600px] rounded-lg p-4 bg-white bg-opacity-60 flex flex-col items-center justify-center gap-4">
     
+      <div className="absolute top-4 left-4">
+          <ReturnButton />
+        </div>
+
         <div className="text-cyan-900 font-bold text-3xl mb-4 w-full text-center">
           <h1>Reset your password</h1>
         </div>
