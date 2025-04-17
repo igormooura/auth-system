@@ -4,6 +4,7 @@ import { useState } from "react";
 import SubmitButton from "../components/Buttons/SubmitButton";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { motion } from "framer-motion";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -15,52 +16,62 @@ const Login = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    
+
     if (!email || !password) {
       return setError("Please enter a valid email");
     }
-    
-   
 
-    try { 
+    try {
       setLoading(true);
       const response = await axios.post("http://localhost:4000/login", {
         email: email,
-        password: password
+        password: password,
       });
-      
+
       const { token, user } = response.data;
-      localStorage.setItem("token", response.data.token);
-    
+      localStorage.setItem("token", token);
       localStorage.setItem("userData", JSON.stringify(user));
-      
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       navigate("/home");
-      
     } catch (error) {
       setLoading(false);
       if (axios.isAxiosError(error)) {
-        setError(error.response?.data?.message || "Login failed. Please try again.");
+        setError(
+          error.response?.data?.message || "Login failed. Please try again."
+        );
       } else {
         setError("An unexpected error occurred");
       }
     }
-  }
+  };
 
   return (
     <div className="bg-gradient-to-tl from-cyan-900 to-cyan-500 min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-[1000px] h-auto md:h-[600px] rounded-lg p-4 bg-white bg-opacity-60 flex flex-col md:flex-row items-center justify-center gap-4">
-        <form onSubmit={handleLogin} className="flex-1 flex flex-col items-start justify-start gap-5 w-full p-4">
-          <div className="text-cyan-900 font-bold text-3xl mb-4">
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="w-full max-w-[1000px] h-auto md:h-[600px] rounded-lg p-4 bg-white bg-opacity-60 flex flex-col md:flex-row items-center justify-center gap-4"
+      >
+        <form
+          onSubmit={handleLogin}
+          className="flex-1 flex flex-col items-start justify-start gap-5 w-full p-4"
+        >
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+            className="text-cyan-900 font-bold text-3xl mb-4"
+          >
             <h1>Welcome!</h1>
-          </div>
-          
+          </motion.div>
+
           {error && (
             <div className="w-full p-2 bg-red-100 text-red-700 rounded">
               {error}
             </div>
           )}
-          
+
           <label className="block text-lg text-white">Email</label>
           <Inputs
             type="email"
@@ -93,27 +104,30 @@ const Login = () => {
               </Link>
             </span>
 
-          <p className="text-white">
-            
-            <Link to ="/forgotpassword"
-            className="text-blue-700 hover:text-cyan-400 underline">
-              Reset your password  
-            </Link>
-          </p>
-
+            <p className="text-white">
+              <Link
+                to="/forgotpassword"
+                className="text-blue-700 hover:text-cyan-400 underline"
+              >
+                Reset your password
+              </Link>
+            </p>
           </div>
         </form>
 
-          
-
-        <div className="flex-1 flex items-center justify-center w-full p-4">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.3, duration: 0.6 }}
+          className="flex-1 flex items-center justify-center w-full p-4"
+        >
           <img
             src={cadeado}
             alt="Imagem de um cadeado"
             className="w-full h-auto max-w-[300px] md:max-w-[400px] rounded-lg"
           />
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 };
