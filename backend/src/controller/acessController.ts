@@ -10,7 +10,7 @@ dotenv.config();
 
 export const createUser = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, isAdmin } = req.body;
 
     if (!email || !name || !password) {
       res.status(400).json({ message: "All fields need to be filled" });
@@ -26,7 +26,7 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = await UserModel.create({ name, email, password: hashedPassword });
+    const newUser = await UserModel.create({ name, email, password: hashedPassword, isAdmin });
 
     res.status(201).json({ message: "User successfully created", user: newUser });
 
