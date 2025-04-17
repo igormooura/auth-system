@@ -6,6 +6,7 @@ interface UserInfo {
   userId: string;
   name: string;
   email: string;
+  isAdmin: boolean;
 }
 
 const useVerifyAuth = () => {
