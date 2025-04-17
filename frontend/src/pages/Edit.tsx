@@ -44,8 +44,17 @@ const Edit = () => {
         alert("Profile successfully updated!");
       
       }
-    } catch (error) {
-      console.error("Error updating user", error);
+    } catch (error: any) {
+      if (axios.isAxiosError(error) && error.response) {
+        const { status, data } = error.response;
+    
+        if (status === 400 && data.message === "Email already in use") {
+          alert("This email is already in use by another account.");
+        } 
+      } else {
+        console.error("error:", error);
+        alert("An unexpected error occurred.");
+      }
     }
   };
 

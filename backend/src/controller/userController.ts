@@ -40,7 +40,18 @@ export const updateUser = async (req: Request, res: Response): Promise<void> => 
     }
 
     if (name) user.name = name;
-    if (email) user.email = email;
+
+    if (email && email !== user.email) {
+      const emailInUse = await UserModel.findOne({ email });
+
+      if (emailInUse && emailInUse._id.toString() !== userId) {
+        res.status(400).json({ message: "Email already in use" });
+        return;
+      }
+
+      user.email = email;
+    }
+    
     if (password) user.password = await bcrypt.hash(password, 10);
 
     await user.save();
