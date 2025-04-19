@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import Edit from "./pages/Edit";
 import ForgotPassowrd from "./pages/ForgotPassowrd";
 import ResetPassword from "./pages/ResetPassword";
+import Admin from "./pages/Admin";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/edit" element={<Edit/>}></Route>
         <Route path="/forgotpassword" element={<ForgotPassowrd/>}/>
         <Route path="/reset-password" element={<ResetPassword/>}/>
+        <Route path="/admin" element={<Admin/>}/>
       </Routes>
     </BrowserRouter>
   );
