@@ -1,6 +1,8 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { TiDelete } from "react-icons/ti";
+import ReturnButton from "../components/Buttons/ReturnButton";
+
 
 type User = {
   _id: string;
@@ -50,7 +52,10 @@ const Admin = () => {
               <th className="px-6 py-3">Name</th>
               <th className="px-6 py-3">Email</th>
               <th className="px-6 py-3">Admin</th>
-              <th className="px-6 py-3"> <TiDelete/></th>
+              <th className="px-6 py-3">
+                {" "}
+                <TiDelete />
+              </th>
             </tr>
           </thead>
           <tbody className="bg-white text-gray-700">
@@ -69,19 +74,18 @@ const Admin = () => {
                   )}
                 </td>
                 <td className="px-6 py-4">
-              <button
-                onClick={() => handleDeleteAccount(user._id)}
-              >
-              <TiDelete />
-
-              </button>
-            </td>
+                  <button onClick={() => handleDeleteAccount(user._id)}>
+                    <TiDelete />
+                  </button>
+                </td>
               </tr>
-              
             ))}
-            
           </tbody>
         </table>
+      </div>
+      <div className=" mt-15">
+
+        <ReturnButton/>
       </div>
     </div>
   );
