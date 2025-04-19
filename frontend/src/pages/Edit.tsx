@@ -44,7 +44,7 @@ const Edit = () => {
         alert("Profile successfully updated!");
       
       }
-    } catch (error: any) {
+    } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         const { status, data } = error.response;
     
