@@ -12,11 +12,7 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.options('*', cors({
-    origin: 'http://localhost:5173',
-    credentials: true,
-  }));
-  
+app.use(cors());
 app.use(cookieParser());
 
 app.get("/", (req, res) => {
@@ -33,10 +29,12 @@ const startServer = async () => {
         await connectToDb();
         console.log("Database connected successfully!");
 
-        
+        app.listen(4000, () => {
+            console.log("Development running on port 4000");
+        });
     } catch (error) {
         console.log("Error connecting to the database", error);
-        process.exit(1); 
+        process.exit(1);
     }
 };
 
