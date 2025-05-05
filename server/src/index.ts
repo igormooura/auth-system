@@ -23,10 +23,22 @@ app.get("/", (req, res) => {
 app.use(acessRoutes);
 app.use(userRoutes); 
 
+
+const startServer = async () => {
+    try {
+        await connectToDb();
+        console.log("Database connected successfully!");
+
+        app.listen(4000, () => {
+            console.log("Development running on port 4000");
+        });
+    } catch (error) {
+        console.log("Error connecting to the database", error);
+        process.exit(1); 
+    }
+};
+
+startServer();
+
 // error middleware
 app.use(errorHandler);
-
-app.listen(4000, async () => {
-    console.log("Development running on 4000");
-    await connectToDb();
-});
