@@ -60,7 +60,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     const token = jwt.sign(
       { userId: user._id, email: user.email, name: user.name, isAdmin: user.isAdmin },
-      'segredo_demais',
+      process.env.JWT_TOKEN,
       { expiresIn: '2h' }
     );
 
@@ -89,7 +89,7 @@ export const forgotPassword = async (req: Request, res: Response): Promise<void>
 
     const token = jwt.sign(
       { userId: user._id },
-      'segredo_demais',
+      process.env.JWT_TOKEN,
       { expiresIn: '15m' }
     );
 
@@ -132,7 +132,7 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
       return;
     }
 
-    const decoded: any = jwt.verify(token, 'segredo_demais');
+    const decoded: any = jwt.verify(token, process.env.JWT_TOKEN);
     const user = await UserModel.findById(decoded.userId);
 
     if (!user) {

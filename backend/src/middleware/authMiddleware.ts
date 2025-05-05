@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
+
 class HttpError extends Error {
     status: number;
     constructor(message: string, status: number) {
@@ -15,6 +16,11 @@ const handleUnauthorizedError = (next: NextFunction): void => {
     next(error);
 };
 
+
+if (!process.env.JWT_TOKEN) {
+    throw new Error("JWT_TOKEN is not defined in environment variables");
+}
+
 function authMiddleware(req: Request, res: Response, next: NextFunction) {
     const authHeader = req.get('Authorization') 
 
@@ -25,7 +31,7 @@ function authMiddleware(req: Request, res: Response, next: NextFunction) {
         if (token && bearer.startsWith('bearer')) {
             try {
                 // Verify the token
-                jwt.verify(token, process.env.JWT_SECRET || 'segredo_demais', (err, decoded) => {
+                jwt.verify(token, process.env.JWT_TOKEN , (err, decoded) => {
                     if (err) {
                         // fail to authenticate user
                         return res.status(401).json({ 
