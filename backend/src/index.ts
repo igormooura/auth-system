@@ -21,7 +21,7 @@ app.use(
 app.use(cookieParser());
 
 app.get("/", (req, res) => {
-    res.send("EAE")
+    res.send("auth-system backend :D")
 });
 
 
