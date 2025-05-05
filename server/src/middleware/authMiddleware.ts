@@ -14,7 +14,7 @@ const handleUnauthorizedError = (next: NextFunction): void => {
     next(error);
 };
 
-const jwtToken = import.meta.env.JWT_TOKEN as string;
+const jwtToken = process.env.JWT_TOKEN as string;
 
 if (!jwtToken) {
     throw new Error("JWT_TOKEN is not defined in environment variables");
