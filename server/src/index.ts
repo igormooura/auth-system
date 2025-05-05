@@ -12,32 +12,9 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-const allowedOrigins = [
-    'http://localhost:5173',
-    'https://auth-system-olive.vercel.app'
-  ];
-  
-  app.use(cors({
-    origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
+app.options('*', cors({
+    origin: 'http://localhost:5173',
     credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization']
-  }));
-  
-  app.options('*', cors({
-    origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    credentials: true
   }));
   
 app.use(cookieParser());
@@ -56,9 +33,7 @@ const startServer = async () => {
         await connectToDb();
         console.log("Database connected successfully!");
 
-        app.listen(4000, () => {
-            console.log("Development running on port 4000");
-        });
+        
     } catch (error) {
         console.log("Error connecting to the database", error);
         process.exit(1); 
