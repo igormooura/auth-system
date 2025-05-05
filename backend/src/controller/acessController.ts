@@ -60,7 +60,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     const token = jwt.sign(
       { userId: user._id, email: user.email, name: user.name, isAdmin: user.isAdmin },
-      process.env.JWT_TOKEN,
+      process.env.JWT_TOKEN!,
       { expiresIn: '2h' }
     );
 
@@ -89,7 +89,7 @@ export const forgotPassword = async (req: Request, res: Response): Promise<void>
 
     const token = jwt.sign(
       { userId: user._id },
-      process.env.JWT_TOKEN,
+      process.env.JWT_TOKEN!,
       { expiresIn: '15m' }
     );
 
@@ -98,13 +98,13 @@ export const forgotPassword = async (req: Request, res: Response): Promise<void>
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: process.env.EMAIL_USER, 
-        pass: process.env.EMAIL_PASS
+        user: process.env.EMAIL_USER!,
+        pass: process.env.EMAIL_PASS!
       }
     });
 
     await transporter.sendMail({
-      from: '"Support Team" <' + process.env.EMAIL_USER + '>',
+      from: `"Support Team" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: 'Password Reset Request',
       html: `
@@ -132,7 +132,7 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
       return;
     }
 
-    const decoded: any = jwt.verify(token, process.env.JWT_TOKEN);
+    const decoded: any = jwt.verify(token, process.env.JWT_TOKEN!);
     const user = await UserModel.findById(decoded.userId);
 
     if (!user) {
@@ -151,6 +151,3 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
     res.status(400).json({ message: "Invalid or expired token" });
   }
 };
-
-
-
