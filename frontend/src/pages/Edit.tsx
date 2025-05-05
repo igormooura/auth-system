@@ -37,7 +37,7 @@ const Edit = () => {
     if (!userInfo || !userInfo.userId) return;
 
     try {
-      const response = await axios.put(`http://localhost:4000/user/${userInfo.userId}`, 
+      const response = await axios.put(`${process.env.REACT_APP_BACKEND}/user/${userInfo.userId}`, 
         updatedProfile
       );
       if (response.status === 200) {
