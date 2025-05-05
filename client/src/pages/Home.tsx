@@ -30,7 +30,7 @@ const Home: React.FC = () => {
 
     try {
       const response = await axios.delete(
-        `${process.env.REACT_APP_BACKEND}/user/${userInfo.userId}`,
+        `${import.meta.env.VITE_BACKEND}/user/${userInfo.userId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

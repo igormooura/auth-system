@@ -29,7 +29,7 @@ const ResetPassword = () => {
 
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND}/reset-password`,
+        `${import.meta.env.VITE_BACKEND}/reset-password`,
         {
           token,
           password,

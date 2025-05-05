@@ -17,7 +17,7 @@ const Admin = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_BACKEND}/users`);
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND}/users`);
         setUsers(response.data);
       } catch (error) {
         console.error("Error:", error);
