@@ -4,7 +4,7 @@ import SubmitButton from "../components/Buttons/SubmitButton";
 import axios from "axios";
 import ReturnButton from "../components/Buttons/ReturnButton";
 
-const ForgotPassowrd = () => {
+const ForgotPassword = () => {
   const [email, setEmail] = useState("");
 
   const passwordReset = async (e: React.FormEvent) => {
@@ -63,4 +63,4 @@ const ForgotPassowrd = () => {
   );
 };
 
-export default ForgotPassowrd;  
+export default ForgotPassword;  
