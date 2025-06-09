@@ -10,17 +10,50 @@ const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+
   const [error, setError] = useState("");
+  const [nameError, setNameError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const validateForm = (): boolean => {
+    let isValid = true;
+    setNameError("");
+    setEmailError("");
+    setPasswordError("");
     setError("");
 
-    if (!name) return setError("Please enter your name");
-    if (!email) return setError("Please enter a valid email");
-    if (!password) return setError("Please enter a password");
+    if (!name.trim()) {
+      setNameError("Name is required.");
+      isValid = false;
+    }
+
+    if (!email.trim()) {
+      setEmailError("Email is required.");
+      isValid = false;
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      setEmailError("Enter a valid email address.");
+      isValid = false;
+    }
+
+    if (!password.trim()) {
+      setPasswordError("Password is required.");
+      isValid = false;
+    } else if (password.length < 6) {
+      setPasswordError("Password must be at least 6 characters.");
+      isValid = false;
+    }
+
+    return isValid;
+  };
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validateForm()) return;
 
     try {
       setLoading(true);
@@ -32,15 +65,19 @@ const SignUp = () => {
 
       console.log("Registration successful", response.data);
       navigate("/");
-    } catch (error) {
+    } catch (err) {
       setLoading(false);
-      if (axios.isAxiosError(error)) {
-        setError(
-          error.response?.data?.message ||
-            "Registration failed. Please try again."
-        );
+      if (axios.isAxiosError(err)) {
+        const status = err.response?.status;
+        if (status === 409) {
+          setError("Email is already registered.");
+        } else if (status === 500) {
+          setError("Server error. Please try again later.");
+        } else {
+          setError(err.response?.data?.message || "Registration failed.");
+        }
       } else {
-        setError("An unexpected error occurred");
+        setError("Unexpected error. Please check your connection.");
       }
     }
   };
@@ -94,6 +131,7 @@ const SignUp = () => {
               onChange={(e) => setName(e.target.value)}
               required
             />
+            {nameError && <p className="text-sm text-red-600">{nameError}</p>}
           </div>
 
           <div className="w-full max-w-[450px]">
@@ -105,6 +143,7 @@ const SignUp = () => {
               onChange={(e) => setEmail(e.target.value)}
               required
             />
+            {emailError && <p className="text-sm text-red-600">{emailError}</p>}
           </div>
 
           <div className="w-full max-w-[450px]">
@@ -118,6 +157,7 @@ const SignUp = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
+            {passwordError && <p className="text-sm text-red-600">{passwordError}</p>}
           </div>
 
           <SubmitButton type="submit">
