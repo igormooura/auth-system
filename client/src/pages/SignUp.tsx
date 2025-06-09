@@ -42,8 +42,8 @@ const SignUp = () => {
     if (!password.trim()) {
       setPasswordError("Password is required.");
       isValid = false;
-    } else if (password.length < 6) {
-      setPasswordError("Password must be at least 6 characters.");
+    } else if (password.length < 1) {
+      setPasswordError("Password must be at least 1 character");
       isValid = false;
     }
 
