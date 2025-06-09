@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
+import { verifyAuthToken } from "../services/authService";
 
 interface UserInfo {
   userId: string;
@@ -11,43 +12,32 @@ interface UserInfo {
 
 const useVerifyAuth = () => {
   const navigate = useNavigate();
-  
+
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);  
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
-  const [token, SetToken] = useState<string>(localStorage.getItem("token") || "");
+  const [token, setToken] = useState<string>(localStorage.getItem("token") || "");
 
   useEffect(() => {
     const verifyAuth = async () => {
       if (!token) {
         navigate("/");
-        alert("No token found.");
         return;
       }
 
       try {
-        const response = await axios.get("http://localhost:4000/verify-auth", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
+        const data = await verifyAuthToken(token);
         setIsAuthenticated(true);
-        setUserInfo(response.data.user);  
+        setUserInfo(data.user);
         setError("");
       } catch (err) {
-        if (axios.isAxiosError(err)) {
-          const axiosError = err as AxiosError;
-          if (axiosError.response?.status === 401) {
-            SetToken("");
-            navigate("/");
-            return;
-          } else {
-            setError("Error verifying authentication");
-          }
+        if ((err as AxiosError).response?.status === 401) {
+          setToken("");
+          localStorage.removeItem("token");
+          navigate("/");
         } else {
-          setError("An unexpected error occurred");
+          setError("Erro ao verificar autenticação");
         }
       } finally {
         setIsLoading(false);
@@ -59,7 +49,7 @@ const useVerifyAuth = () => {
 
   const logout = () => {
     localStorage.removeItem("token");
-    SetToken("");
+    setToken("");
     setIsAuthenticated(false);
     setUserInfo(null);
     navigate("/");

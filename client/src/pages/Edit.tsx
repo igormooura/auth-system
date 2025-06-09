@@ -15,7 +15,7 @@ const Edit = () => {
   
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`http://localhost:4000/user/${userId}`);
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND}/user/${userId}`);
         const userData = response.data;
   
         setEmail(userData.email);

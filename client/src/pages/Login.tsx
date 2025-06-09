@@ -10,22 +10,43 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const validateForm = (): boolean => {
+    let isValid = true;
+    setEmailError("");
+    setPasswordError("");
+
+    if (!email) {
+      setEmailError("Email is required");
+      isValid = false;
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      setEmailError("Enter a valid email address");
+      isValid = false;
+    }
+
+    if (!password) {
+      setPasswordError("Password is required");
+      isValid = false;
+    }
+
+    return isValid;
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
-    if (!email || !password) {
-      return setError("Please enter a valid email");
-    }
+    if (!validateForm()) return;
 
     try {
       setLoading(true);
-    const response = await axios.post(`${import.meta.env.VITE_BACKEND}/login`, {
-        email: email,
-        password: password,
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND}/login`, {
+        email,
+        password,
       });
 
       const { token, user } = response.data;
@@ -33,14 +54,19 @@ const Login = () => {
       localStorage.setItem("userData", JSON.stringify(user));
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       navigate("/home");
-    } catch (error) {
+    } catch (err) {
       setLoading(false);
-      if (axios.isAxiosError(error)) {
-        setError(
-          error.response?.data?.message || "Login failed. Please try again."
-        );
+      if (axios.isAxiosError(err)) {
+        const status = err.response?.status;
+        if (status === 401) {
+          setError("Invalid email or password.");
+        } else if (status === 500) {
+          setError("Server error. Please try again later.");
+        } else {
+          setError(err.response?.data?.message || "Login failed. Please try again.");
+        }
       } else {
-        setError("An unexpected error occurred");
+        setError("Unexpected error. Please check your network connection.");
       }
     }
   };
@@ -80,6 +106,8 @@ const Login = () => {
             onChange={(e) => setEmail(e.target.value)}
             required
           />
+          {emailError && <p className="text-sm text-red-600">{emailError}</p>}
+
           <label className="block text-lg text-white">Password</label>
           <Inputs
             type="password"
@@ -88,6 +116,7 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
+          {passwordError && <p className="text-sm text-red-600">{passwordError}</p>}
 
           <SubmitButton type="submit">
             {loading ? "Logging in..." : "Login"}
