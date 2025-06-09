@@ -40,7 +40,7 @@ const Admin = () => {
     if (!confirmDelete) return;
 
     try {
-      const response = await axios.delete(`http://localhost:4000/user/${_id}`);
+      const response = await axios.delete(`${import.meta.env.VITE_BACKEND}/user/${_id}`);
       console.log("Usuário deletado com sucesso:", response.data);
     } catch (error) {
       console.error("Erro ao deletar usuário:", error);
