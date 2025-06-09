@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { TiDelete } from "react-icons/ti";
 import ReturnButton from "../components/Buttons/ReturnButton";
 
-
 type User = {
   _id: string;
   name: string;
@@ -14,10 +13,16 @@ type User = {
 const Admin = () => {
   const [users, setUsers] = useState<User[]>([]);
 
+  const createDeleteHandler = (_id: string) => () => {
+    handleDeleteAccount(_id);
+  };
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND}/users`);
+        const response = await axios.get(
+          `${import.meta.env.VITE_BACKEND}/users`
+        );
         setUsers(response.data);
       } catch (error) {
         console.error("Error:", error);
@@ -74,7 +79,7 @@ const Admin = () => {
                   )}
                 </td>
                 <td className="px-6 py-4">
-                  <button onClick={() => handleDeleteAccount(user._id)}>
+                  <button onClick={createDeleteHandler(user._id)}>
                     <TiDelete />
                   </button>
                 </td>
@@ -84,8 +89,7 @@ const Admin = () => {
         </table>
       </div>
       <div className=" mt-15">
-
-        <ReturnButton/>
+        <ReturnButton />
       </div>
     </div>
   );
